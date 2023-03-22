@@ -1,2 +1,63 @@
+I have done the following:
+An Api with 2 controllers, for the hotels and the bookings.
+Each controller contains Get, GetAll, Create and Edit method.
+Each controller is using a repository for the Bookings and a repository for the Hotels.
+
+I added a caching mechanism and a DB store mechanism.
+If it's not in the cache it might be in the store, if it's not then I query the DB.
+
+
+I added a small logger.
+I added a background service for future use. For example if we need to update our hotels or bookings from another source or api.
+
+I am not familiar with unit test.
+I tried to do some proper testing but I didn't achieve it.
+
+
+Some info for the database:
+Name: Bookings
+Table Scripts:
+
+USE [Bookings]
+GO
+
+/****** Object: Table [dbo].[Bookings] Script Date: 22/3/2023 3:20:45 μμ ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Bookings] (
+    [Id]           INT           IDENTITY (1, 1) NOT NULL,
+    [HotelId]      INT           NOT NULL,
+    [CustomerName] VARCHAR (50)  NOT NULL,
+    [NumOfPax]     INT           NOT NULL,
+    [CreatedAt]    DATETIME2 (7) NOT NULL,
+    [UpdatedAt]    DATETIME2 (7) NULL
+);
+
+USE [Bookings]
+GO
+
+/****** Object: Table [dbo].[Hotels] Script Date: 22/3/2023 3:21:03 μμ ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Hotels] (
+    [Id]         INT           IDENTITY (1, 1) NOT NULL,
+    [Name]       VARCHAR (50)  NOT NULL,
+    [Address]    VARCHAR (250) NOT NULL,
+    [StarRating] INT           NOT NULL,
+    [CreatedAt]  DATETIME2 (7) NOT NULL,
+    [UpdatedAt]  DATETIME2 (7) NULL
+);
+
+
+
+
 
 

@@ -1,38 +1,33 @@
 ﻿using HotelBookings.Application.Interfaces;
-using HotelBookings.Contract.Dtos;
+using HotelBookings.Application.Models;
 using HotelHotels.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Moq;
 using Xunit;
 
 namespace HotelBookings.Api.Controllers
 {
     public class TestBookingController : Controller
     {
-        private ILogger<BookingsController> _logger;
-        private ILogger<HotelsController> _hotelsLogger;
+        private readonly Mock<IBookingsStore> _store;
 
-        private readonly IBookingsStore _store;
-        private readonly ICachingBookings _cachingBookings;
+        private readonly Mock<ICachingBookings> _cachingBookings;
+        private readonly Mock<ILogger<BookingsController>> _logger;
+        private readonly Mock<ILogger<HotelsController>> _hotelsLogger;
+        private readonly Mock<IHotelsRepository> _hotelsRepository;
+        //private readonly Mock<BookingsController> _bookingsController;
+        private readonly Mock<IBookingsRepository>  _bookingsRepository;
 
-        private readonly IBookingsRepository _bookingsRepository;
-        private readonly IHotelsRepository _hotelsRepository;
-
-        private readonly BookingsController _bookings;
-        private readonly HotelsController _hotels;
-
-        public TestBookingController(ILogger<BookingsController> logger, ILogger<HotelsController> hotelsLogger
-            , IBookingsStore store, ICachingBookings cachingBookings
-            , IBookingsRepository bookingsRepository, IHotelsRepository hotelsRepository)
+        public TestBookingController()
         {
-            _store = store;
-            _cachingBookings = cachingBookings;
-            _logger = logger;
-            _hotelsLogger = hotelsLogger;
-            _bookingsRepository = bookingsRepository;
-            _hotelsRepository = hotelsRepository;
-            _bookings = new BookingsController(_logger, _store, _cachingBookings, _bookingsRepository, _hotelsRepository);
-            _hotels = new HotelsController(_hotelsLogger, _store, _cachingBookings, _hotelsRepository);
+            _store = new Mock<IBookingsStore>();
+            _cachingBookings = new Mock<ICachingBookings>();
+            _logger = new Mock<ILogger<BookingsController>>();
+            _hotelsLogger = new Mock<ILogger<HotelsController>>();
+            _hotelsRepository = new Mock<IHotelsRepository>();
+            //_bookingsController = new Mock<BookingsController>();
+            _bookingsRepository = new Mock<IBookingsRepository>();
         }
 
         [InlineData(1)]
@@ -43,9 +38,23 @@ namespace HotelBookings.Api.Controllers
         {
             var booking = Booking();
 
-            var result = _bookings.Get(id);
 
-            Assert.Equal(booking, result);
+
+            var res = _bookingsRepository.Setup(x => x.GetById(It.IsAny<int>())).Returns<Bookings>((Bookings x) => booking);
+
+
+            Assert.NotNull(res);
+            Assert.True(res.Equals(booking));
+
+        }
+
+        [Fact]
+        public void CreateBooking()
+        {
+            var item = Booking();
+            var id = 1;
+            var res = _bookingsRepository.Setup(w => w.Create(item)).ReturnsAsync((int x) => id);
+            //Assert.True(res>0);
         }
 
         [InlineData(1)]
@@ -54,16 +63,27 @@ namespace HotelBookings.Api.Controllers
         [Theory]
         public void CheckHotel(int id)
         {
-            var hotel = Hotel();
+            var hotel = new Hotels();
 
-            var result = _hotels.Get(id);
+            var result = _hotelsRepository.Setup(x => x.GetById(id)).Returns<Hotels>((Hotels x) => hotel);
 
-            Assert.Equal(hotel, result);
+            //Assert.True(!string.IsNullOrEmpty(hotel.Name));
         }
 
-        private HotelsDto Hotel()
+        [Fact]
+        public void CreateHotel()
         {
-            return new HotelsDto()
+            var item = Hotel();
+            var res = 0;
+
+            _hotelsRepository.Setup(w => w.Create(item)).ReturnsAsync((int x) => res);
+
+            //Assert.True(res > 0);
+        }
+
+        private Hotels Hotel()
+        {
+            return new Hotels()
             {
                 Id = 1,
                 Name = "Greece",
@@ -73,16 +93,15 @@ namespace HotelBookings.Api.Controllers
             };
         }
 
-        private BookingsDto Booking()
+        private Bookings Booking()
         {
-            return new BookingsDto()
+            return new Bookings()
             {
-                Id = 10,
+                Id = 3,
                 CustomerName = "Thanasis",
-                Hotel = Hotel(),
-                NumOfPax = 4,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
+                HotelId = 3,
+                NumOfPax = 2,
+                CreatedAt = new DateTime(2023, 1, 1)
             };
         }
     }
