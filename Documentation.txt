@@ -10,8 +10,7 @@ If it's not in the cache it might be in the store, if it's not then I query the 
 I added a small logger.
 I added a background service for future use. For example if we need to update our hotels or bookings from another source or api.
 
-I am not familiar with unit test.
-I tried to do some proper testing but I didn't achieve it.
+I am not familiar with unit test, but I tried to do some proper testing but I didn't achieve it.
 
 
 Some info for the database:

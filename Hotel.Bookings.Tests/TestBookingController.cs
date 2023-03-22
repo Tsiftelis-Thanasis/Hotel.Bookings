@@ -12,22 +12,24 @@ namespace HotelBookings.Api.Controllers
     {
         private readonly Mock<IBookingsStore> _store;
 
-        private readonly Mock<ICachingBookings> _cachingBookings;
-        private readonly Mock<ILogger<BookingsController>> _logger;
-        private readonly Mock<ILogger<HotelsController>> _hotelsLogger;
+        //private readonly Mock<ICachingBookings> _cachingBookings;
+        //private readonly Mock<ILogger<BookingsController>> _logger;
+        //private readonly Mock<ILogger<HotelsController>> _hotelsLogger;
         private readonly Mock<IHotelsRepository> _hotelsRepository;
+
         //private readonly Mock<BookingsController> _bookingsController;
-        private readonly Mock<IBookingsRepository>  _bookingsRepository;
+        private readonly Mock<IBookingsRepository> _bookingsRepository;
 
         public TestBookingController()
         {
             _store = new Mock<IBookingsStore>();
-            _cachingBookings = new Mock<ICachingBookings>();
-            _logger = new Mock<ILogger<BookingsController>>();
-            _hotelsLogger = new Mock<ILogger<HotelsController>>();
+            //_cachingBookings = new Mock<ICachingBookings>();
+            //_logger = new Mock<ILogger<BookingsController>>();
+            //_hotelsLogger = new Mock<ILogger<HotelsController>>();
             _hotelsRepository = new Mock<IHotelsRepository>();
-            //_bookingsController = new Mock<BookingsController>();
             _bookingsRepository = new Mock<IBookingsRepository>();
+            //_bookingsController = new Mock<BookingsController>();
+
         }
 
         [InlineData(1)]
@@ -38,14 +40,12 @@ namespace HotelBookings.Api.Controllers
         {
             var booking = Booking();
 
+            var res = _bookingsRepository.Setup(x => x.GetById(id)).Returns<Bookings>((Bookings x) => booking);
 
-
-            var res = _bookingsRepository.Setup(x => x.GetById(It.IsAny<int>())).Returns<Bookings>((Bookings x) => booking);
 
 
             Assert.NotNull(res);
             Assert.True(res.Equals(booking));
-
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace HotelBookings.Api.Controllers
             var item = Booking();
             var id = 1;
             var res = _bookingsRepository.Setup(w => w.Create(item)).ReturnsAsync((int x) => id);
-            //Assert.True(res>0);
+            Assert.True(res.Equals(1));
         }
 
         [InlineData(1)]
