@@ -10,27 +10,42 @@ namespace HotelBookings.Api.Controllers
 {
     public class TestBookingController : Controller
     {
-        private readonly Mock<IBookingsStore> _store;
+        private readonly IBookingsStore _store;
 
-        //private readonly Mock<ICachingBookings> _cachingBookings;
-        //private readonly Mock<ILogger<BookingsController>> _logger;
-        //private readonly Mock<ILogger<HotelsController>> _hotelsLogger;
+        private readonly ICachingBookings _cachingBookings;
+        private readonly ILogger<BookingsController> _logger;
+        private readonly ILogger<HotelsController> _hotelsLogger;
         private readonly Mock<IHotelsRepository> _hotelsRepository;
 
         //private readonly Mock<BookingsController> _bookingsController;
         private readonly Mock<IBookingsRepository> _bookingsRepository;
 
-        public TestBookingController()
+        public TestBookingController(IBookingsStore store, ICachingBookings caching, ILogger<BookingsController> logger,
+            ILogger<HotelsController> hotelsLogger)
         {
-            _store = new Mock<IBookingsStore>();
-            //_cachingBookings = new Mock<ICachingBookings>();
-            //_logger = new Mock<ILogger<BookingsController>>();
-            //_hotelsLogger = new Mock<ILogger<HotelsController>>();
+            _store = store;
+            _cachingBookings = caching;
+            _logger = logger;
+            _hotelsLogger = hotelsLogger;
             _hotelsRepository = new Mock<IHotelsRepository>();
             _bookingsRepository = new Mock<IBookingsRepository>();
             //_bookingsController = new Mock<BookingsController>();
 
         }
+
+
+        //[Fact]
+        //public void GetHotelId()
+        //{
+        //    var hotel = Hotel();
+
+        //    _hotelsRepository.Setup(x => x.GetById(1)).Returns<Hotels>((Hotels h)=> hotel);
+
+        //    HotelsController h = new HotelsController(_hotelsLogger, _store, _cachingBookings, _hotelsRepository.Object);
+        //    var result = h.Get(1);
+
+        //    Assert.Equal(hotel.ToHotelDTO(), result);
+        //}
 
         [InlineData(1)]
         [InlineData(2)]
